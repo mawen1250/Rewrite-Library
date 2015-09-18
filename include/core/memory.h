@@ -82,25 +82,30 @@ void AlignedRealloc(_Ty *&Memory, size_t NewCount, size_t Alignment = MEMORY_ALI
 template < typename _Ty >
 ptrdiff_t CalStride(int width, size_t Alignment = MEMORY_ALIGNMENT)
 {
-    size_t line_size = static_cast<size_t>(width) * sizeof(_Ty);
-    return line_size % Alignment == 0 ? line_size : (line_size / Alignment + 1) * Alignment;
+    size_t row_size = static_cast<size_t>(width) * sizeof(_Ty);
+    return row_size % Alignment == 0 ? row_size : (row_size / Alignment + 1) * Alignment;
 }
 
 inline size_t ValidAlignment(size_t Alignment, ptrdiff_t stride = 0)
 {
-    if (Alignment <= 1) return 1;
-
-    size_t rshift = 0;
-    Alignment = (Alignment << 1) - 1;
-    while (Alignment >>= 1)
+    if (Alignment > 2)
     {
-        ++rshift;
+        size_t rshift = 0;
+        Alignment = (Alignment << 1) - 1;
+        while (Alignment >>= 1)
+        {
+            ++rshift;
+        }
+        Alignment = size_t(1) << rshift;
     }
-    Alignment = size_t(1) << (rshift - 1);
 
     if (stride != 0)
     {
-        while (Abs(stride) % Alignment)
+        while (Abs(stride) % Alignment == 0 && Alignment < MEMORY_ALIGNMENT)
+        {
+            Alignment <<= 1;
+        }
+        while (Abs(stride) % Alignment != 0)
         {
             Alignment >>= 1;
         }
@@ -131,7 +136,7 @@ template < typename _Dt1, typename _St1 >
 void BitBlt(_Dt1 *dstp, const _St1 *srcp, int height, int width, ptrdiff_t dst_stride, ptrdiff_t src_stride)
 {
     STATIC_ASSERT(!std::is_same<_Dt1, void>::value && !std::is_same<_St1, void>::value,
-        "BitBlt: instantiating with void pointer is not allowed here in this template function.");
+        "BitBlt: Instantiating with void pointer is not allowed here in this template function.");
     BitBlt<_Dt1, _St1>(reinterpret_cast<void *>(dstp), reinterpret_cast<const void *>(srcp),
         height, width, dst_stride * sizeof(_Dt1), src_stride * sizeof(_St1));
 }

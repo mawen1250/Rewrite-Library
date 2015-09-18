@@ -4,10 +4,12 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <TargetExt>.dll</TargetExt>
+    <TargetName>rwl_$(ProjectName)</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
       <AdditionalIncludeDirectories>..\include;..\include\api;..\include\common;..\include\algorithm;..\source\algorithm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>RWAPI_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup />

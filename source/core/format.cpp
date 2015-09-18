@@ -24,6 +24,53 @@ bool Format::IsPacked() const
     return type >= 0x80 && type < 0xff;
 }
 
+bool Format::IsYUV() const
+{
+    switch (type)
+    {
+    case YUV:
+    case YUYV:
+    case YVYU:
+    case UYVY:
+    case VYUY:
+    case AYUV:
+        return true;
+    default:
+        return false;
+    }
+}
+
+bool Format::IsRGB() const
+{
+    switch (type)
+    {
+    case RGB:
+    case RGB24:
+    case RGB32:
+    case GBR24:
+    case GBR32:
+    case BGR24:
+    case BGR32:
+        return true;
+    default:
+        return false;
+    }
+}
+
+bool Format::IsRGBA() const
+{
+    switch (type)
+    {
+    case RGBA:
+    case RGBA32:
+    case GBRA32:
+    case BGRA32:
+        return true;
+    default:
+        return false;
+    }
+}
+
 void Format::TypeRestrict(Format &format, int type)
 {
     if (type < 0) type = format.type;
@@ -204,6 +251,8 @@ Format Format::ID2Format(int id)
     format.Bps = (BpsMask & id) >> BpsShift;
     format.bps = (bpsMask & id) >> bpsShift;
     format.sample = (sampleMask & id) >> sampleShift;
+
+    return format;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -260,7 +309,7 @@ FormatPtr FormatManager::RegisterFormat(int type, int bps, int sample,
     }
     else
     {
-        FormatPtr p_format = std::make_shared<const Format>(format);
+        FormatPtr p_format = MakeFormatPtr(format);
         _formats.insert(std::make_pair(format.id, p_format));
         return p_format;
     }
