@@ -11,7 +11,7 @@ RW_BEGIN
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Memory allocation
 
-const size_t MEMORY_ALIGNMENT = 64;
+const size_t MEMORY_ALIGNMENT = 256;
 
 inline void *AlignedMalloc(size_t Size, size_t Alignment = MEMORY_ALIGNMENT)
 {
@@ -88,6 +88,8 @@ ptrdiff_t CalStride(int width, size_t Alignment = MEMORY_ALIGNMENT)
 
 inline size_t ValidAlignment(size_t Alignment, ptrdiff_t stride = 0)
 {
+    if (Alignment <= 0)
+        Alignment = 1;
     if (Alignment > 2)
     {
         size_t rshift = 0;

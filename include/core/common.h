@@ -19,7 +19,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // API macros
 
-#if defined(WIN32) || defined(_WIN32)
+#if defined(WIN32) || defined(_WIN32) || defined(WINCE)
 #    define RW_CDECL __cdecl
 #    define RW_STDCALL __stdcall
 #else
@@ -27,7 +27,7 @@
 #    define RW_STDCALL
 #endif
 
-#if (defined(WIN32) || defined(_WIN32)) && !defined(_WIN64)
+#if (defined(WIN32) || defined(_WIN32) || defined(WINCE)) && !defined(_WIN64)
 #    define RW_CC RW_STDCALL
 #else
 #    define RW_CC

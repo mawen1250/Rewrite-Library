@@ -10,12 +10,6 @@
 #include "core/memory.h"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Disable warnings
-
-#pragma warning(push)
-#pragma warning(disable:4251)
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Namespace rw begin
 
 RW_BEGIN
@@ -288,19 +282,30 @@ struct RW_EXPORTS DataMemory
     typedef std::function<DataType *(int row_size, int height, int &stride, size_t &alignment)> Allocator;
     typedef std::function<void(DataType *memory)> Deallocator;
 
+    enum
+    {
+        mtStride = 0x100,
+        mtSubStep = 0x10
+    };
+
     enum MemoryType
     {
-        Custom = -1,
         None = 0,
-        CPU = 1,
-        OpenCL = 2,
-        CUDA = 3
+        CPU = None + mtStride,
+        CPU_Continuous = CPU + mtSubStep,
+        OpenCL = CPU + mtStride,
+        OpenCL_Continuous = OpenCL + mtSubStep,
+        CUDA = OpenCL + mtStride,
+        CUDA_Continuous = CUDA + mtSubStep,
+        Custom = mtStride * 0x400000
     };
 
     Allocator alloc;
     Deallocator dealloc;
 
     int Type() const { return _type; }
+    int TypeMain() const { return _type / mtStride * mtStride; }
+    int TypeSub() const { return _type % mtStride / mtSubStep * mtSubStep; }
 
 protected:
     DataMemory(int type, Allocator alloc, Deallocator dealloc);
@@ -321,8 +326,43 @@ struct RW_EXPORTS DataMemoryCPU
     DataMemoryCPU();
 };
 
+struct RW_EXPORTS DataMemoryCPU_Continuous
+    : public DataMemory
+{
+    DataMemoryCPU_Continuous();
+};
+
+struct RW_EXPORTS DataMemoryOpenCL
+    : public DataMemory
+{
+    DataMemoryOpenCL(); // not implemented yet
+};
+
+struct RW_EXPORTS DataMemoryOpenCL_Continuous
+    : public DataMemory
+{
+    DataMemoryOpenCL_Continuous(); // not implemented yet
+};
+
+struct RW_EXPORTS DataMemoryCUDA
+    : public DataMemory
+{
+    DataMemoryCUDA();
+};
+
+struct RW_EXPORTS DataMemoryCUDA_Continuous
+    : public DataMemory
+{
+    DataMemoryCUDA_Continuous();
+};
+
 extern RW_EXPORTS const DataMemoryPtr dmNone;
 extern RW_EXPORTS const DataMemoryPtr dmCPU;
+extern RW_EXPORTS const DataMemoryPtr dmCPU_Continuous;
+extern RW_EXPORTS const DataMemoryPtr dmOpenCL; // not implemented yet
+extern RW_EXPORTS const DataMemoryPtr dmOpenCL_Continuous; // not implemented yet
+extern RW_EXPORTS const DataMemoryPtr dmCUDA;
+extern RW_EXPORTS const DataMemoryPtr dmCUDA_Continuous;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // PlaneData
@@ -356,6 +396,8 @@ public:
 public: // inline/template functions
     PlaneData(PlaneData &&src);
     PlaneData &operator=(PlaneData &&src);
+    bool operator==(const PlaneData &right) const;
+    bool operator!=(const PlaneData &right) const;
 
     int MemoryType() const;
     bool Continuous() const;
@@ -404,6 +446,8 @@ public:
 public: // inline/template functions
     Frame(Frame &&src);
     Frame &operator=(Frame &&src);
+    bool operator==(const Frame &right) const;
+    bool operator!=(const Frame &right) const;
 
     FormatPtr Format() const;
     int MemoryType() const;
@@ -462,11 +506,6 @@ private:
 // Namespace rw end
 
 RW_END
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Disable warnings
-
-#pragma warning(pop)
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Include template definitions

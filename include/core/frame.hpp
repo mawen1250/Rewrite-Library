@@ -35,6 +35,25 @@ inline PlaneData &PlaneData::operator=(PlaneData &&src)
     return *this;
 }
 
+inline bool PlaneData::operator==(const PlaneData &right) const
+{
+    if (_memory == right._memory
+        && _data == right._data
+        && width == right.width
+        && height == right.height
+        && stride == right.stride
+        && Bps == right.Bps
+        && alignment == right.alignment
+        && image == right.image)
+        return true;
+    return false;
+}
+
+inline bool PlaneData::operator!=(const PlaneData &right) const
+{
+    return !(*this == right);
+}
+
 inline int PlaneData::MemoryType() const
 {
     return _memory->Type();
@@ -140,6 +159,23 @@ inline Frame &Frame::operator=(Frame &&src)
     src.Release();
 
     return *this;
+}
+
+inline bool Frame::operator==(const Frame &right) const
+{
+    if (_width == right._width
+        && _height == right._height
+        && _format == right._format
+        && _memory == right._memory
+        && _alignment == right._alignment
+        && _data == right._data)
+        return true;
+    return false;
+}
+
+inline bool Frame::operator!=(const Frame &right) const
+{
+    return !(*this == right);
 }
 
 inline FormatPtr Frame::Format() const

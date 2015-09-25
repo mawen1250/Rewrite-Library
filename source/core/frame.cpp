@@ -6,52 +6,6 @@
 RW_BEGIN
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// DataMemory
-
-DataMemory::DataMemory(int type, Allocator alloc, Deallocator dealloc)
-    : _type(type), alloc(std::move(alloc)), dealloc(std::move(dealloc))
-{}
-
-DataMemoryNone::DataMemoryNone()
-    : DataMemory(None,
-    [](int row_size, int height, int &stride, size_t &alignment)
-    {
-        return DataNullptr;
-    },
-    [](DataType *memory)
-    {})
-{}
-
-DataMemoryCPU::DataMemoryCPU()
-    : DataMemory(CPU,
-    [](int row_size, int height, int &stride, size_t &alignment)
-    {
-        size_t size = height * static_cast<size_t>(Abs(stride));
-        if (size > 0)
-        {
-            return reinterpret_cast<DataType *>(AlignedMalloc(size, Max(MEMORY_ALIGNMENT, alignment)));
-        }
-        else
-        {
-            return DataNullptr;
-        }
-    },
-    [](DataType *memory)
-    {
-        if (memory)
-        {
-            AlignedFree(memory);
-        }
-    })
-{}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Preset smart pointers to DataMemory
-
-const DataMemoryPtr dmNone = MakeDataMemoryPtr<DataMemoryNone>();
-const DataMemoryPtr dmCPU = MakeDataMemoryPtr<DataMemoryCPU>();
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // PlaneData
 
 PlaneData::PlaneData(int width_, int height_, int stride_, int Bps_, DataMemoryPtr memory_, ptrdiff_t offset_, size_t alignment_)

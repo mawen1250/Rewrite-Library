@@ -16,13 +16,11 @@
       <AdditionalIncludeDirectories>$(CudaToolkitIncludeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile>
-      <DisableSpecificWarnings>
-      </DisableSpecificWarnings>
       <PreprocessorDefinitions>_CUDA_;_CUDA_1_2_;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <CudaCompile>
       <CodeGeneration>compute_12,sm_12;%(CodeGeneration)</CodeGeneration>
-      <AdditionalCompilerOptions>/wd4819</AdditionalCompilerOptions>
+      <AdditionalCompilerOptions>/wd4819/wd4251</AdditionalCompilerOptions>
     </CudaCompile>
   </ItemDefinitionGroup>
   <ItemGroup />
