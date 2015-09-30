@@ -23,14 +23,34 @@ struct RW_EXPORTS DataMemory;
 struct RW_EXPORTS PlaneData;
 class RW_EXPORTS Frame;
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Instantiate and export template classes
+// Type definitions
+
 typedef uint8_t DataType;
+template class RW_EXPORTS std::shared_ptr<const Format>;
+template class RW_EXPORTS std::shared_ptr<Format>;
 typedef std::shared_ptr<const Format> FormatPtr;
+template class RW_EXPORTS std::shared_ptr<const DataType>;
+template class RW_EXPORTS std::shared_ptr<DataType>;
 typedef std::shared_ptr<DataType> DataPtr;
+template class RW_EXPORTS std::shared_ptr<const DataMemory>;
+template class RW_EXPORTS std::shared_ptr<DataMemory>;
 typedef std::shared_ptr<const DataMemory> DataMemoryPtr;
+template class RW_EXPORTS std::shared_ptr<const PlaneData>;
+template class RW_EXPORTS std::shared_ptr<PlaneData>;
 typedef std::shared_ptr<PlaneData> PlaneDataPtr;
+template class RW_EXPORTS std::shared_ptr<const Frame>;
+template class RW_EXPORTS std::shared_ptr<Frame>;
 typedef std::shared_ptr<Frame> FramePtr;
+template class RW_EXPORTS std::map<int, FormatPtr>;
+typedef std::map<int, FormatPtr> FormatMap;
 
 #define DataNullptr ((DataType *)(NULLPTR))
+
+template class RW_EXPORTS std::function<DataType *(int row_size, int height, int &stride, size_t &alignment)>;
+template class RW_EXPORTS std::function<void(DataType *memory)>;
+template class RW_EXPORTS std::vector<PlaneDataPtr>;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Point
@@ -48,16 +68,16 @@ struct _Point
 
     void Scale(double scale_x, double scale_y, _Ty offset_x = 0, _Ty offset_y = 0);
 
-    friend _Myt operator+(const _Myt &left, const _Myt &right);
-    friend _Myt operator-(const _Myt &left, const _Myt &right);
-    friend _Myt operator*(const _Myt &left, const _Ty &right);
-    friend _Myt operator/(const _Myt &left, const _Ty &right);
-    friend _Myt operator*(const _Ty &left, const _Myt &right);
-    friend _Myt operator/(const _Ty &left, const _Myt &right);
-    friend _Myt &operator+=(_Myt &left, const _Myt &right);
-    friend _Myt &operator-=(_Myt &left, const _Myt &right);
-    friend _Myt &operator*=(_Myt &left, const _Ty &right);
-    friend _Myt &operator/=(_Myt &left, const _Ty &right);
+    template <typename _Ty> friend _Myt operator+(const _Myt &left, const _Myt &right);
+    template <typename _Ty> friend _Myt operator-(const _Myt &left, const _Myt &right);
+    template <typename _Ty> friend _Myt operator*(const _Myt &left, const _Ty &right);
+    template <typename _Ty> friend _Myt operator/(const _Myt &left, const _Ty &right);
+    template <typename _Ty> friend _Myt operator*(const _Ty &left, const _Myt &right);
+    template <typename _Ty> friend _Myt operator/(const _Ty &left, const _Myt &right);
+    template <typename _Ty> friend _Myt &operator+=(_Myt &left, const _Myt &right);
+    template <typename _Ty> friend _Myt &operator-=(_Myt &left, const _Myt &right);
+    template <typename _Ty> friend _Myt &operator*=(_Myt &left, const _Ty &right);
+    template <typename _Ty> friend _Myt &operator/=(_Myt &left, const _Ty &right);
 };
 
 typedef _Point<int> Point2I;
@@ -86,16 +106,16 @@ struct _Rect
     void Normalize(int image_width, int image_height);
     void Scale(double scale_x, double scale_y, _Ty offset_x = 0, _Ty offset_y = 0);
 
-    friend _Myt operator+(const _Myt &left, const _Myt &right);
-    friend _Myt operator-(const _Myt &left, const _Myt &right);
-    friend _Myt operator*(const _Myt &left, const _Ty &right);
-    friend _Myt operator/(const _Myt &left, const _Ty &right);
-    friend _Myt operator*(const _Ty &left, const _Myt &right);
-    friend _Myt operator/(const _Ty &left, const _Myt &right);
-    friend _Myt &operator+=(_Myt &left, const _Myt &right);
-    friend _Myt &operator-=(_Myt &left, const _Myt &right);
-    friend _Myt &operator*=(_Myt &left, const _Ty &right);
-    friend _Myt &operator/=(_Myt &left, const _Ty &right);
+    template <typename _Ty> friend _Myt operator+(const _Myt &left, const _Myt &right);
+    template <typename _Ty> friend _Myt operator-(const _Myt &left, const _Myt &right);
+    template <typename _Ty> friend _Myt operator*(const _Myt &left, const _Ty &right);
+    template <typename _Ty> friend _Myt operator/(const _Myt &left, const _Ty &right);
+    template <typename _Ty> friend _Myt operator*(const _Ty &left, const _Myt &right);
+    template <typename _Ty> friend _Myt operator/(const _Ty &left, const _Myt &right);
+    template <typename _Ty> friend _Myt &operator+=(_Myt &left, const _Myt &right);
+    template <typename _Ty> friend _Myt &operator-=(_Myt &left, const _Myt &right);
+    template <typename _Ty> friend _Myt &operator*=(_Myt &left, const _Ty &right);
+    template <typename _Ty> friend _Myt &operator/=(_Myt &left, const _Ty &right);
 };
 
 typedef _Rect<int> Rect2I;
@@ -178,6 +198,7 @@ struct RW_EXPORTS Format
     bool IsYUV() const;
     bool IsRGB() const;
     bool IsRGBA() const;
+    std::string Name() const;
 
     static void TypeRestrict(Format &format, int type = -1);
     static int bps2Bps(int bps);
@@ -190,9 +211,6 @@ struct RW_EXPORTS Format
 
 class RW_EXPORTS FormatManager
 {
-public:
-    typedef std::map<int, FormatPtr> FormatMap;
-
 public:
     FormatPtr operator()(FormatPtr format);
     FormatPtr operator()(int type, int bps = -1, int sample = -1,
@@ -388,6 +406,7 @@ public:
     PlaneData(PlaneDataPtr ref, Rect roi);
 
     void Create(int width, int height, int stride, int Bps, DataMemoryPtr memory = dmCPU, ptrdiff_t offset = 0, size_t alignment = MEMORY_ALIGNMENT);
+    void Create(const PlaneData &pdata, size_t alignment_ = 0);
     void Release();
     PlaneDataPtr GetPtr() const;
     PlaneData Clone() const;
@@ -400,22 +419,24 @@ public: // inline/template functions
     bool operator!=(const PlaneData &right) const;
 
     int MemoryType() const;
+    int MemoryTypeMain() const;
+    int MemoryTypeSub() const;
     bool Continuous() const;
 
     bool Empty() const;
     bool Unique() const;
     int UseCount() const;
 
-    const DataType *Ptr() const;
-    DataType *Ptr();
+    const DataType *Data() const;
+    DataType *Data();
     template <typename _Ty> const _Ty *Ptr() const;
     template <typename _Ty> _Ty *Ptr();
-    template <typename _Ty> const _Ty *Ptr(int y) const;
-    template <typename _Ty> _Ty *Ptr(int y);
-    template <typename _Ty> const _Ty *Ptr(int y, int x) const;
-    template <typename _Ty> _Ty *Ptr(int y, int x);
-    template <typename _Ty> const _Ty *Ptr(int y, int x, int c) const;
-    template <typename _Ty> _Ty *Ptr(int y, int x, int c);
+    template <typename _Ty> const _Ty *Ptr(const int &y) const;
+    template <typename _Ty> _Ty *Ptr(const int &y);
+    template <typename _Ty> const _Ty *Ptr(const int &y, const int &x) const;
+    template <typename _Ty> _Ty *Ptr(const int &y, const int &x);
+    template <typename _Ty> const _Ty *Ptr(const int &y, const int &x, const int &c) const;
+    template <typename _Ty> _Ty *Ptr(const int &y, const int &x, const int &c);
 
 private:
     void createData(ptrdiff_t offset);
@@ -438,10 +459,12 @@ public:
 
 public:
     void Create(int width, int height, FormatPtr format = fGray8U, DataMemoryPtr memory = dmCPU, size_t alignment = MEMORY_ALIGNMENT);
+    void Create(const Frame &frame, size_t alignment = 0);
     void Release();
     FramePtr GetPtr() const;
     Frame Clone() const;
     FramePtr ClonePtr() const;
+    PlaneDataPtr GetPlanePtr(int plane = 0) const;
 
 public: // inline/template functions
     Frame(Frame &&src);
@@ -451,6 +474,8 @@ public: // inline/template functions
 
     FormatPtr Format() const;
     int MemoryType() const;
+    int MemoryTypeMain() const;
+    int MemoryTypeSub() const;
     bool Continuous(int plane) const;
     int Bps() const;
     size_t Alignment() const;
@@ -464,13 +489,13 @@ public: // inline/template functions
 
     int Channels() const;
     int Planes() const;
-    int Width(int plane) const;
+    int Width(const int &plane) const;
     int Width() const;
-    int Height(int plane) const;
+    int Height(const int &plane) const;
     int Height() const;
-    int Stride(int plane = 0) const;
-    int SubSampleWRatio(int channel = 1) const;
-    int SubSampleHRatio(int channel = 1) const;
+    int Stride(const int &plane = 0) const;
+    int SubSampleWRatio(const int &channel = 1) const;
+    int SubSampleHRatio(const int &channel = 1) const;
 
     bool Empty(int plane) const;
     bool Empty() const;
@@ -478,16 +503,16 @@ public: // inline/template functions
     bool Unique() const;
     int UseCount(int plane = 0) const;
 
-    const DataType *Ptr(int plane = 0) const;
-    DataType *Ptr(int plane = 0);
-    template <typename _Ty> const _Ty *Ptr(int plane = 0) const;
-    template <typename _Ty> _Ty *Ptr(int plane = 0);
-    template <typename _Ty> const _Ty *Ptr(int plane, int y) const;
-    template <typename _Ty> _Ty *Ptr(int plane, int y);
-    template <typename _Ty> const _Ty *Ptr(int plane, int y, int x) const;
-    template <typename _Ty> _Ty *Ptr(int plane, int y, int x);
-    template <typename _Ty> const _Ty *Ptr(int plane, int y, int x, int c) const;
-    template <typename _Ty> _Ty *Ptr(int plane, int y, int x, int c);
+    const DataType *Data(const int &plane = 0) const;
+    DataType *Data(const int &plane = 0);
+    template <typename _Ty> const _Ty *Ptr(const int &plane = 0) const;
+    template <typename _Ty> _Ty *Ptr(const int &plane = 0);
+    template <typename _Ty> const _Ty *Ptr(const int &plane, const int &y) const;
+    template <typename _Ty> _Ty *Ptr(const int &plane, const int &y);
+    template <typename _Ty> const _Ty *Ptr(const int &plane, const int &y, const int &x) const;
+    template <typename _Ty> _Ty *Ptr(const int &plane, const int &y, const int &x);
+    template <typename _Ty> const _Ty *Ptr(const int &plane, const int &y, const int &x, const int &c) const;
+    template <typename _Ty> _Ty *Ptr(const int &plane, const int &y, const int &x, const int &c);
 
 private:
     void createData();
@@ -508,7 +533,7 @@ private:
 RW_END
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Include template definitions
+// Include inline/template definitions
 
 #include "core/core.hpp"
 #include "core/frame.hpp"

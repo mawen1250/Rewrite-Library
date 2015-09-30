@@ -13,21 +13,41 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="CUDA Source Files">
+      <UniqueIdentifier>{286e4e8f-aac4-429f-9514-5bd897c66869}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Inline Source Files">
+      <UniqueIdentifier>{790c168a-78e8-4649-b3b7-3dea48ac973c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\source\cuda\data_memory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\source\cuda\cuda.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\cuda\stream.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\include\cuda\Helper.cuh">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\cuda\HelperCU.cuh">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\cuda\device_helper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\cuda\host_helper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\cuda\cuda.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\cuda\cuda.hpp">
+      <Filter>Inline Source Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CudaCompile Include="..\source\cuda\median_filter.cu">
+      <Filter>CUDA Source Files</Filter>
+    </CudaCompile>
   </ItemGroup>
 </Project>

@@ -41,6 +41,12 @@ PlaneData::PlaneData(PlaneDataPtr ref, Rect roi)
 
 void PlaneData::Create(int width_, int height_, int stride_, int Bps_, DataMemoryPtr memory_, ptrdiff_t offset_, size_t alignment_)
 {
+    if (width == width_ && height == height_ && stride == stride_ && Bps == Bps_
+        && _memory.get() == memory_.get() && alignment == alignment_ && !Empty())
+    {
+        return;
+    }
+
     width = width_;
     height = height_;
     stride = stride_;
@@ -49,6 +55,13 @@ void PlaneData::Create(int width_, int height_, int stride_, int Bps_, DataMemor
     alignment = alignment_;
 
     createData(offset_);
+}
+
+void PlaneData::Create(const PlaneData &pdata, size_t alignment_)
+{
+    alignment_ = alignment_ > 0 ? alignment_ : pdata.alignment;
+    int stride_ = static_cast<int>(CalStride<uint8_t>(pdata.width * pdata.Bps, alignment_));
+    Create(pdata.width, pdata.height, stride_, pdata.Bps, pdata._memory, 0, alignment_);
 }
 
 void PlaneData::Release()
@@ -168,6 +181,12 @@ Frame::Frame(FramePtr ref, Rect roi)
 
 void Frame::Create(int width, int height, FormatPtr format, DataMemoryPtr memory, size_t alignment)
 {
+    if (_width == width && _height == height && _format == format
+        && _memory == memory, _alignment == alignment && !Empty())
+    {
+        return;
+    }
+
     _width = width;
     _height = height;
     _format = std::move(format);
@@ -175,6 +194,12 @@ void Frame::Create(int width, int height, FormatPtr format, DataMemoryPtr memory
     _alignment = alignment;
 
     createData();
+}
+
+void Frame::Create(const Frame &frame, size_t alignment)
+{
+    alignment = alignment > 0 ? alignment : frame._alignment;
+    Create(frame._width, frame._height, frame._format, frame._memory, alignment);
 }
 
 void Frame::Release()
@@ -206,6 +231,11 @@ Frame Frame::Clone() const
 FramePtr Frame::ClonePtr() const
 {
     return MakeFramePtr(Clone());
+}
+
+PlaneDataPtr Frame::GetPlanePtr(int plane) const
+{
+    return _data.at(plane);
 }
 
 void Frame::createData()

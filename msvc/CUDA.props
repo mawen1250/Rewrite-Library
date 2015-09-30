@@ -20,7 +20,7 @@
     </ClCompile>
     <CudaCompile>
       <CodeGeneration>compute_12,sm_12;%(CodeGeneration)</CodeGeneration>
-      <AdditionalCompilerOptions>/wd4819/wd4251</AdditionalCompilerOptions>
+      <AdditionalCompilerOptions>/wd4819</AdditionalCompilerOptions>
     </CudaCompile>
   </ItemDefinitionGroup>
   <ItemGroup />

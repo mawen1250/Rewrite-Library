@@ -125,12 +125,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\source\cuda\cuda.cpp" />
     <ClCompile Include="..\source\cuda\data_memory.cpp" />
+    <ClCompile Include="..\source\cuda\stream.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\include\cuda\cuda.h" />
+    <ClInclude Include="..\include\cuda\cuda.hpp" />
     <ClInclude Include="..\include\cuda\device_helper.h" />
-    <ClInclude Include="..\include\cuda\Helper.cuh" />
-    <ClInclude Include="..\include\cuda\HelperCU.cuh" />
+    <ClInclude Include="..\include\cuda\host_helper.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <CudaCompile Include="..\source\cuda\median_filter.cu" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

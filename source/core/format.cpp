@@ -71,6 +71,126 @@ bool Format::IsRGBA() const
     }
 }
 
+std::string Format::Name() const
+{
+    static const std::string funcName = "Format::Name";
+
+    if (IsPlanar())
+    {
+        std::string name;
+
+        switch (type)
+        {
+        case Gray:
+            name += "Gray";
+            break;
+        case RGB:
+            name += "RGB";
+            break;
+        case RGBA:
+            name += "RGBA";
+            break;
+        case YUV:
+            name += "YUV";
+            if (subsample_w == 0 && subsample_h == 0)
+            {
+                name += "444P";
+            }
+            else if (subsample_w == 1 && subsample_h == 0)
+            {
+                name += "422P";
+            }
+            else if (subsample_w == 1 && subsample_h == 1)
+            {
+                name += "420P";
+            }
+            else if (subsample_w == 2 && subsample_h == 0)
+            {
+                name += "411P";
+            }
+            else if (subsample_w == 2 && subsample_h == 1)
+            {
+                name += "410P";
+            }
+            else
+            {
+                name += "ssw" + std::to_string(subsample_w) + "ssh" + std::to_string(subsample_h) + "P";
+            }
+            break;
+        default:
+            throw std::invalid_argument(funcName + ": unrecognized Planar type!");
+        }
+
+        name += std::to_string(bps);
+
+        switch (sample)
+        {
+        case UInteger:
+            name += "U";
+            break;
+        case Integer:
+            name += "I";
+            break;
+        case Float:
+            name += "F";
+            break;
+        case Complex:
+            name += "C";
+            break;
+        default:
+            throw std::invalid_argument(funcName + ": unrecognized sample!");
+        }
+
+        return name;
+    }
+    else if (IsPacked())
+    {
+        switch (type)
+        {
+        case RGB24:
+            return "RGB24";
+        case RGB32:
+            return "RGB32";
+        case RGBA32:
+            return "RGBA32";
+        case GBR24:
+            return "GBR24";
+        case GBR32:
+            return "GBR32";
+        case GBRA32:
+            return "GBRA32";
+        case BGR24:
+            return "BGR24";
+        case BGR32:
+            return "BGR32";
+        case BGRA32:
+            return "BGRA32";
+        case YUYV:
+            return "YUYV";
+        case YVYU:
+            return "YVYU";
+        case UYVY:
+            return "UYVY";
+        case VYUY:
+            return "VYUY";
+        case AYUV:
+            return "AYUV";
+        default:
+            throw std::invalid_argument(funcName + ": unrecognized Packed type!");
+        }
+    }
+    else if (type == Undef)
+    {
+        return "Undefined";
+    }
+    else
+    {
+        throw std::invalid_argument(funcName + ": unrecognized type!");
+    }
+
+    return std::string();
+}
+
 void Format::TypeRestrict(Format &format, int type)
 {
     if (type < 0) type = format.type;

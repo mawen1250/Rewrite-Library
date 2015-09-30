@@ -59,6 +59,16 @@ inline int PlaneData::MemoryType() const
     return _memory->Type();
 }
 
+inline int PlaneData::MemoryTypeMain() const
+{
+    return _memory->TypeMain();
+}
+
+inline int PlaneData::MemoryTypeSub() const
+{
+    return _memory->TypeSub();
+}
+
 inline bool PlaneData::Continuous() const
 {
     return width * Bps == stride;
@@ -79,12 +89,12 @@ inline int PlaneData::UseCount() const
     return image.use_count();
 }
 
-inline const DataType *PlaneData::Ptr() const
+inline const DataType *PlaneData::Data() const
 {
     return image.get();
 }
 
-inline DataType *PlaneData::Ptr()
+inline DataType *PlaneData::Data()
 {
     return image.get();
 }
@@ -102,37 +112,37 @@ _Ty *PlaneData::Ptr()
 }
 
 template <typename _Ty>
-const _Ty *PlaneData::Ptr(int y) const
+const _Ty *PlaneData::Ptr(const int &y) const
 {
     return reinterpret_cast<const _Ty *>(image.get() + y * stride);
 }
 
 template <typename _Ty>
-_Ty *PlaneData::Ptr(int y)
+_Ty *PlaneData::Ptr(const int &y)
 {
     return reinterpret_cast<_Ty *>(image.get() + y * stride);
 }
 
 template <typename _Ty>
-const _Ty *PlaneData::Ptr(int y, int x) const
+const _Ty *PlaneData::Ptr(const int &y, const int &x) const
 {
     return reinterpret_cast<const _Ty *>(image.get() + y * stride + x * Bps);
 }
 
 template <typename _Ty>
-_Ty *PlaneData::Ptr(int y, int x)
+_Ty *PlaneData::Ptr(const int &y, const int &x)
 {
     return reinterpret_cast<_Ty *>(image.get() + y * stride + x * Bps);
 }
 
 template <typename _Ty>
-const _Ty *PlaneData::Ptr(int y, int x, int c) const
+const _Ty *PlaneData::Ptr(const int &y, const int &x, const int &c) const
 {
     return reinterpret_cast<const _Ty *>(image.get() + y * stride + x * Bps + c * sizeof(_Ty));
 }
 
 template <typename _Ty>
-_Ty *PlaneData::Ptr(int y, int x, int c)
+_Ty *PlaneData::Ptr(const int &y, const int &x, const int &c)
 {
     return reinterpret_cast<_Ty *>(image.get() + y * stride + x * Bps + c * sizeof(_Ty));
 }
@@ -186,6 +196,16 @@ inline FormatPtr Frame::Format() const
 inline int Frame::MemoryType() const
 {
     return _memory->Type();
+}
+
+inline int Frame::MemoryTypeMain() const
+{
+    return _memory->TypeMain();
+}
+
+inline int Frame::MemoryTypeSub() const
+{
+    return _memory->TypeSub();
 }
 
 inline bool Frame::Continuous(int plane) const
@@ -243,7 +263,7 @@ inline int Frame::Planes() const
     return IsPlanar() ? Channels() : IsPacked() ? 1 : 0;
 }
 
-inline int Frame::Width(int plane) const
+inline int Frame::Width(const int &plane) const
 {
     return _data.at(plane)->width;
 }
@@ -253,7 +273,7 @@ inline int Frame::Width() const
     return _width;
 }
 
-inline int Frame::Height(int plane) const
+inline int Frame::Height(const int &plane) const
 {
     return _data.at(plane)->height;
 }
@@ -263,17 +283,17 @@ inline int Frame::Height() const
     return _height;
 }
 
-inline int Frame::Stride(int plane) const
+inline int Frame::Stride(const int &plane) const
 {
     return _data.at(plane)->stride;
 }
 
-inline int Frame::SubSampleWRatio(int channel) const
+inline int Frame::SubSampleWRatio(const int &channel) const
 {
     return channel > 0 && channel < 3 ? 1 << _format->subsample_w : 1;
 }
 
-inline int Frame::SubSampleHRatio(int channel) const
+inline int Frame::SubSampleHRatio(const int &channel) const
 {
     return channel > 0 && channel < 3 ? 1 << _format->subsample_h : 1;
 }
@@ -322,60 +342,60 @@ inline int Frame::UseCount(int plane) const
     return 0;
 }
 
-inline const DataType *Frame::Ptr(int plane) const
+inline const DataType *Frame::Data(const int &plane) const
 {
-    return _data.at(plane)->Ptr();
+    return _data.at(plane)->Data();
 }
 
-inline DataType *Frame::Ptr(int plane)
+inline DataType *Frame::Data(const int &plane)
 {
-    return _data.at(plane)->Ptr();
+    return _data.at(plane)->Data();
 }
 
 template <typename _Ty>
-const _Ty *Frame::Ptr(int plane) const
+const _Ty *Frame::Ptr(const int &plane) const
 {
     return _data.at(plane)->Ptr<_Ty>();
 }
 
 template <typename _Ty>
-_Ty *Frame::Ptr(int plane)
+_Ty *Frame::Ptr(const int &plane)
 {
     return _data.at(plane)->Ptr<_Ty>();
 }
 
 template <typename _Ty>
-const _Ty *Frame::Ptr(int plane, int y) const
+const _Ty *Frame::Ptr(const int &plane, const int &y) const
 {
     return _data.at(plane)->Ptr<_Ty>(y);
 }
 
 template <typename _Ty>
-_Ty *Frame::Ptr(int plane, int y)
+_Ty *Frame::Ptr(const int &plane, const int &y)
 {
     return _data.at(plane)->Ptr<_Ty>(y);
 }
 
 template <typename _Ty>
-const _Ty *Frame::Ptr(int plane, int y, int x) const
+const _Ty *Frame::Ptr(const int &plane, const int &y, const int &x) const
 {
     return _data.at(plane)->Ptr<_Ty>(y, x);
 }
 
 template <typename _Ty>
-_Ty *Frame::Ptr(int plane, int y, int x)
+_Ty *Frame::Ptr(const int &plane, const int &y, const int &x)
 {
     return _data.at(plane)->Ptr<_Ty>(y, x);
 }
 
 template <typename _Ty>
-const _Ty *Frame::Ptr(int plane, int y, int x, int c) const
+const _Ty *Frame::Ptr(const int &plane, const int &y, const int &x, const int &c) const
 {
     return _data.at(plane)->Ptr<_Ty>(y, x, c);
 }
 
 template <typename _Ty>
-_Ty *Frame::Ptr(int plane, int y, int x, int c)
+_Ty *Frame::Ptr(const int &plane, const int &y, const int &x, const int &c)
 {
     return _data.at(plane)->Ptr<_Ty>(y, x, c);
 }
